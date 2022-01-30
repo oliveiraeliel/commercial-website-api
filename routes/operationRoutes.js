@@ -4,23 +4,57 @@ const router = require("express").Router();
 
 router.post("/", async (req, res) => {
   const { buyer, product, quantity } = req.body;
-  const operation = { buyer, product, quantity };
 
-  const verifyStock = await Product.findById(product);
-  if (verifyStock.matchedCount === 0) {
+  const stock = await Product.findById(product);
+  if (stock.matchedCount === 0) {
     res.status(422).json({ message: "Invalid product" });
     return;
   }
-  if (quantity > verifyStock.quantity) {
+  if (quantity > stock.quantity) {
     res.status(406).json({ message: "Insufficient stock" });
     return;
   }
-  const newStockQuantity = verifyStock.quantity - quantity;
+  const newStockQuantity = stock.quantity - quantity;
+  const unityPrice = stock.price;
+  const unityCost = stock.cost
+  const totalPayed = unityPrice * quantity;
+  const totalProfit = totalPayed - quantity * stock.cost;
+
+  const operation = { buyer, product, quantity, unityPrice, totalPayed, totalProfit, unityCost };
 
   try {
-    await Product.updateOne({ _id: product, quantity: newStockQuantity });
-    await Operation.create(operation);
-    res.status(201).json({ message: "Operation has been created" });
+    await Promise.all([
+      Product.updateOne(
+        { _id: product },
+        { quantity: newStockQuantity },
+
+      ),
+      Operation.create(operation),
+    ]).then(() => {
+      res.status(201).json({ message: "Operation has been created" });
+    });
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+router.get("/total", async (req, res) => {
+  try {
+    const operations = await Operation.find();
+    let total = 0;
+    operations.map((row) => {
+      total += row.totalPayed;
+    });
+    res.json({ totalEarned: total });
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+router.get("/", async (req, res) => {
+  try {
+    const operations = await Operation.find();
+    res.status(200).json(operations);
   } catch (error) {
     res.status(500).json({ error: error });
   }

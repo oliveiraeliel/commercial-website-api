@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const operationSchema = mongoose.Schema(
   {
     buyer: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       require: true,
     },
     product: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       require: true,
     },
     quantity: {
@@ -17,6 +17,26 @@ const operationSchema = mongoose.Schema(
         validator: Number.isInteger,
         message: "{VALUE} is not an integer value",
       },
+    },
+    unityCost: {
+      type: Number,
+      require: true,
+      trim: true,
+    },
+    unityPrice: {
+      type: Number,
+      require: true,
+      trim: true,
+    },
+    totalPayed: {
+      type: Number,
+      require: true,
+      trim: true,
+    },
+    totalProfit: { 
+      type: Number,
+      require: true,
+      trim: true,
     },
   },
   { timestamps: true }
