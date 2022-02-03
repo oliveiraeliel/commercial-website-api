@@ -19,11 +19,21 @@ const productSchema = mongoose.Schema(
       require: true,
       trim: true,
     },
+    onSale: {
+      type: Boolean,
+    },
+    onSalePrice: {
+      type: Number,
+      trim: true,
+    },
     brand: {
       type: String,
       require: true,
       lowercase: true,
       trim: true,
+    },
+    imageURL: {
+      type: String,
     },
     quantity: {
       type: Number,

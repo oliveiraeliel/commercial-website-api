@@ -1,13 +1,25 @@
 const Product = require("../models/Product");
 const router = require("express").Router();
+// const fileUploader = require("../configs/cloudinary.config");
 
 router.post("/", async (req, res) => {
-  const { name, price, brand, quantity } = req.body;
-  const product = { name, price, brand, quantity };
+  const { name, price, brand, cost, quantity } = req.body;
+  const product = { name, price, cost, brand, quantity };
 
   try {
-    await Product.create(product);
-    res.status(201).json({ message: "Product has been created" });
+    const p = await Product.create(product);
+    res.status(201).json({ product_id: p._id });
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
+router.patch("/image", async (req, res) => {
+  const { image, _id } = req.body;
+
+  try {
+    const imgURL = await Product.updateOne({ _id: _id }, { imageURL: image });
+    res.send(200).json({ imgURL: imgURL });
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -24,8 +36,8 @@ router.get("/", async (req, res) => {
 
 router.patch("/:id", async (req, res) => {
   const id = req.params.id;
-  const { name, price, brand, quantity, cost } = req.body;
-  const product = { name, price, brand, quantity, cost };
+  const { name, price, brand, quantity, cost, onSale, onSalePrice } = req.body;
+  const product = { name, price, brand, quantity, cost, onSale, onSalePrice };
 
   try {
     await Product.updateOne({ _id: id }, product);
