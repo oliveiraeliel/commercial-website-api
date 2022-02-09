@@ -3,7 +3,7 @@ const Product = require("../models/Product");
 const router = require("express").Router();
 
 router.post("/", async (req, res) => {
-  const { buyer, product, quantity } = req.body;
+  const { buyer, product, quantity, unityCost, unityPrice } = req.body;
 
   const stock = await Product.findById(product);
   if (stock.matchedCount === 0) {
@@ -15,8 +15,6 @@ router.post("/", async (req, res) => {
     return;
   }
   const newStockQuantity = stock.quantity - quantity;
-  const unityPrice = stock.price;
-  const unityCost = stock.cost
   const totalPayed = unityPrice * quantity;
   const totalProfit = totalPayed - quantity * stock.cost;
 

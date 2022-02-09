@@ -9,7 +9,7 @@ router.post("/", async (req, res) => {
   const user = { name, fullName, email, password };
 
   try {
-    await User.create(user);
+    const user = await User.create(user);
     res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ error: error });

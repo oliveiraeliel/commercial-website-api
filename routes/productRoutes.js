@@ -35,6 +35,16 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const product = await Product.findOne({ _id: id });
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ error: error });
+  }
+});
+
 router.patch("/", async (req, res) => {
   const { _id, name, price, brand, quantity, cost, onSale, onSalePrice } =
     req.body;
