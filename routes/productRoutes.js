@@ -1,6 +1,5 @@
 const Product = require("../models/Product");
 const router = require("express").Router();
-// const fileUploader = require("../configs/cloudinary.config");
 
 router.post("/", async (req, res) => {
   const onSale = false;
